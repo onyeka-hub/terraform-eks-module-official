@@ -5,7 +5,7 @@ metadata:
   labels:
     tier: frontend
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       tier: frontend
@@ -16,17 +16,13 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:latest
+        image: nginx:alpine
         ports:
         - containerPort: 80
         volumeMounts:
-          - name: config
-            mountPath: /usr/share/nginx/html
-            readOnly: true
+        - name: nginx-volume-claim
+          mountPath: "/tmp/onyeka"
       volumes:
-      - name: config
-        configMap:
-          name: website-index-file
-          items:
-          - key: index-file
-            path: index.html
+      - name: nginx-volume-claim
+        persistentVolumeClaim:
+          claimName: nginx-volume-claim

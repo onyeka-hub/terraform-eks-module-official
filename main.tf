@@ -90,9 +90,9 @@ module "eks" {
 
   self_managed_node_groups = {
     one = {
-      name         = "mixed-1"
+      name         = "self-managed"
       max_size     = 5
-      desired_size = 2
+      desired_size = 1
 
       use_mixed_instances_policy = true
       mixed_instances_policy = {
