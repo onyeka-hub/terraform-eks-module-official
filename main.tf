@@ -55,7 +55,7 @@ module "eks" {
   version = "~> 18.0"
 
   cluster_name    = var.cluster_name
-  cluster_version = "1.23"
+  cluster_version = "1.24"
 
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
@@ -80,71 +80,78 @@ module "eks" {
   subnet_ids = [aws_subnet.eks_cluster[0].id, aws_subnet.eks_cluster[1].id]
 
   # Self Managed Node Group(s)
-  self_managed_node_group_defaults = {
-    instance_type                          = "m6i.large"
-    update_launch_template_default_version = true
-    iam_role_additional_policies = [
-      "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-    ]
-  }
+  # self_managed_node_group_defaults = {
+  #   instance_type                          = "m6i.large"
+  #   update_launch_template_default_version = true
+  #   iam_role_additional_policies = [
+  #     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  #   ]
+  # }
 
-  self_managed_node_groups = {
-    one = {
-      name         = "self-managed"
-      max_size     = 5
-      desired_size = 1
+  # self_managed_node_groups = {
+  #   one = {
+  #     name         = "self-managed"
+  #     max_size     = 5
+  #     desired_size = 1
 
-      use_mixed_instances_policy = true
-      mixed_instances_policy = {
-        instances_distribution = {
-          on_demand_base_capacity                  = 0
-          on_demand_percentage_above_base_capacity = 10
-          spot_allocation_strategy                 = "capacity-optimized"
-        }
+  #     use_mixed_instances_policy = true
+  #     mixed_instances_policy = {
+  #       instances_distribution = {
+  #         on_demand_base_capacity                  = 0
+  #         on_demand_percentage_above_base_capacity = 10
+  #         spot_allocation_strategy                 = "capacity-optimized"
+  #       }
 
-        override = [
-          {
-            instance_type     = "m5.large"
-            weighted_capacity = "1"
-          },
-          {
-            instance_type     = "m6i.large"
-            weighted_capacity = "2"
-          },
-        ]
-      }
-    }
-  }
+  #       override = [
+  #         {
+  #           instance_type     = "t3.large"
+  #           weighted_capacity = "1"
+  #         },
+  #         {
+  #           instance_type     = "m6i.large"
+  #           weighted_capacity = "2"
+  #         },
+  #       ]
+  #     }
+  #   }
+  # }
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
     disk_size      = 50
-    instance_types = ["t3.large", "m5.large"]
+    instance_types = ["t2.medium", "t3.large"]
   }
 
   eks_managed_node_groups = {
-    blue = {}
+    blue = {
+      min_size     = 1
+      max_size     = 10
+      desired_size = 1
+
+      instance_types = ["t2.medium"]
+      capacity_type  = "SPOT"
+    }
     green = {
       min_size     = 1
       max_size     = 10
       desired_size = 1
 
-      instance_types = ["t3.large"]
+      instance_types = ["t2.medium"]
       capacity_type  = "SPOT"
     }
   }
 
-  # Fargate Profile(s)
-  fargate_profiles = {
-    default = {
-      name = "default"
-      selectors = [
-        {
-          namespace = "default"
-        }
-      ]
-    }
-  }
+  # # Fargate Profile(s)
+  # fargate_profiles = {
+  #   default = {
+  #     name = "default"
+  #     selectors = [
+  #       {
+  #         namespace = "default"
+  #       }
+  #     ]
+  #   }
+  # }
 
   # aws-auth configmap
   manage_aws_auth_configmap = true

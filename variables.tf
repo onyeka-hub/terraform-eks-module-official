@@ -3,7 +3,7 @@ variable "aws_region" {
 }
 
 variable "cluster_name" {
-  default = "onyeka-eks-official"
+  default = "onyeka-eks-18-31-0"
   type    = string
 }
 

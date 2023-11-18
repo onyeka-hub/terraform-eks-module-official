@@ -1,6 +1,8 @@
 # terraform-eks-module-official
 Terraform module to create an Elastic Kubernetes (EKS) cluster and associated resources
 
+version = "~> 18.0"
+
 kubectl cheatsheet - https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 Kubernetes API Spec - https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/

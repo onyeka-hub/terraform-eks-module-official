@@ -2,7 +2,7 @@
 # VPC Resources
 #  * VPC
 #  * Subnets
-#
+#  * Route53 hosted zone
 
 resource "aws_vpc" "eks_cluster" {
   cidr_block = var.vpc_cidr
@@ -36,7 +36,7 @@ resource "aws_internet_gateway" "eks_igw" {
   vpc_id = aws_vpc.eks_cluster.id
 
   tags = {
-    Name = "onyeka-igw-terraform-eks"
+    Name = "terraform-eks-igw"
   }
 }
 
@@ -54,4 +54,10 @@ resource "aws_route_table_association" "eks_rtb_assoc" {
 
   subnet_id      = aws_subnet.eks_cluster.*.id[count.index]
   route_table_id = aws_route_table.eks_rtb.id
+}
+
+# Create the route53 hosted zone with onyeka.ga as the domain name
+
+resource "aws_route53_zone" "primary" {
+  name = "onyeka.ga"
 }
